@@ -110,8 +110,9 @@ type="number"
 id="jornada"
 value="540"
 oninput="calcular()">
+
 <div class="nota">
-Ejemplo: 9 horas = 540 minutos
+Ejemplo: Jornada de 9 horas = 540 minutos
 </div>
 </div>
 
@@ -168,9 +169,12 @@ Total Eficiencia:
 
 <script>
 
+// CAMBIA ESTE VALOR CUANDO QUIERAS MÁS O MENOS ESTILOS
+const cantidadEstilos = 7;
+
 const tabla = document.getElementById("tabla");
 
-for(let i=1;i<=5;i++){
+for(let i=1;i<=cantidadEstilos;i++){
 
 tabla.innerHTML += `
 <tr>
@@ -218,7 +222,7 @@ Number(document.getElementById("metaEficiencia").value) || 0;
 
 let total = 0;
 
-for(let i=1;i<=5;i++){
+for(let i=1;i<=cantidadEstilos;i++){
 
 let smvd =
 Number(document.getElementById(`smvd${i}`).value) || 0;
