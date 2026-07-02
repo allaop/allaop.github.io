@@ -1,0 +1,136 @@
+export default function CalculadoraEficiencia() {
+  const React = window.React;
+  const { useState } = React;
+
+  const [jornada, setJornada] = useState(8);
+  const [personas, setPersonas] = useState(20);
+  const [efDeseada, setEfDeseada] = useState(85);
+
+  const [estilos, setEstilos] = useState(
+    Array.from({ length: 5 }, () => ({ smvd: '', unidades: '' }))
+  );
+
+  const actualizar = (index, campo, valor) => {
+    const copia = [...estilos];
+    copia[index][campo] = valor;
+    setEstilos(copia);
+  };
+
+  const eficiencia = (smvd, unidades) => {
+    const c = Number(smvd) || 0;
+    const d = Number(unidades) || 0;
+    const a = Number(jornada) || 0;
+    const b = Number(personas) || 0;
+
+    if (a === 0 || b === 0) return 0;
+    return ((c * d) / (a * b)) * 100;
+  };
+
+  const totalEficiencia = estilos.reduce(
+    (acc, e) => acc + eficiencia(e.smvd, e.unidades),
+    0
+  );
+
+  const metaUnidades = (smvd) => {
+    const a = Number(jornada) || 0;
+    const b = Number(personas) || 0;
+    const c = Number(smvd) || 0;
+
+    if (c === 0) return 0;
+
+    return (((a * b) / c) * (efDeseada / 100)).toFixed(0);
+  };
+
+  return (
+    <div className="p-6 max-w-7xl mx-auto space-y-6">
+      <h1 className="text-3xl font-bold">Calculadora de Eficiencia - Planta de Confección</h1>
+
+      <div className="grid md:grid-cols-3 gap-4">
+        <div>
+          <label className="font-semibold">A. Horas de jornada</label>
+          <input
+            type="number"
+            className="w-full border rounded-xl p-2 mt-1"
+            value={jornada}
+            onChange={(e) => setJornada(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label className="font-semibold">B. Personas disponibles</label>
+          <input
+            type="number"
+            className="w-full border rounded-xl p-2 mt-1"
+            value={personas}
+            onChange={(e) => setPersonas(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label className="font-semibold">% Eficiencia objetivo</label>
+          <input
+            type="number"
+            className="w-full border rounded-xl p-2 mt-1"
+            value={efDeseada}
+            onChange={(e) => setEfDeseada(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="bg-white rounded-3xl shadow p-4 overflow-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b">
+              <th className="text-left p-2">Estilo</th>
+              <th className="text-left p-2">C. SMVD</th>
+              <th className="text-left p-2">D. Unidades</th>
+              <th className="text-left p-2">Eficiencia (%)</th>
+              <th className="text-left p-2">Unidades necesarias para meta</th>
+            </tr>
+          </thead>
+          <tbody>
+            {estilos.map((fila, i) => (
+              <tr key={i} className="border-b">
+                <td className="p-2">Estilo {i + 1}</td>
+                <td className="p-2">
+                  <input
+                    type="number"
+                    className="border rounded-lg p-2 w-full"
+                    value={fila.smvd}
+                    onChange={(e) => actualizar(i, 'smvd', e.target.value)}
+                  />
+                </td>
+                <td className="p-2">
+                  <input
+                    type="number"
+                    className="border rounded-lg p-2 w-full"
+                    value={fila.unidades}
+                    onChange={(e) => actualizar(i, 'unidades', e.target.value)}
+                  />
+                </td>
+                <td className="p-2 font-semibold text-blue-600">
+                  {eficiencia(fila.smvd, fila.unidades).toFixed(2)}%
+                </td>
+                <td className="p-2 font-semibold text-green-600">
+                  {metaUnidades(fila.smvd)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="bg-slate-100 rounded-3xl p-6">
+        <h2 className="text-xl font-bold mb-2">Resumen</h2>
+        <p>
+          <strong>Suma de eficiencias:</strong> {totalEficiencia.toFixed(2)}%
+        </p>
+      </div>
+
+      <div className="bg-yellow-50 rounded-3xl p-4 text-sm">
+        <p><strong>Fórmula de eficiencia:</strong> (SMVD × Unidades) ÷ (Jornada × Personas) × 100</p>
+        <p><strong>Meta de unidades:</strong> ((Jornada × Personas) ÷ SMVD) × (% objetivo ÷ 100)</p>
+      </div>
+    </div>
+  );
+}
