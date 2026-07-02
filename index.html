@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de Eficiencias</title>
+
+<title>Calculadora de Eficiencia</title>
 
 <style>
+
 body{
-    font-family:Arial, sans-serif;
+    font-family: Arial, sans-serif;
     background:#f4f6f9;
     margin:20px;
 }
@@ -41,6 +43,7 @@ input{
     padding:8px;
     border:1px solid #ccc;
     border-radius:5px;
+    box-sizing:border-box;
 }
 
 table{
@@ -60,8 +63,8 @@ th{
 }
 
 .result{
-    font-weight:bold;
     color:#0d6efd;
+    font-weight:bold;
 }
 
 .meta{
@@ -69,12 +72,25 @@ th{
     font-weight:bold;
 }
 
+.resumen{
+    font-size:20px;
+    font-weight:bold;
+}
+
+.nota{
+    color:#666;
+    font-size:13px;
+    margin-top:5px;
+}
+
 @media(max-width:768px){
-.grid{
-grid-template-columns:1fr;
+    .grid{
+        grid-template-columns:1fr;
+    }
 }
-}
+
 </style>
+
 </head>
 
 <body>
@@ -84,24 +100,41 @@ grid-template-columns:1fr;
 <h1>Calculadora de Eficiencia de Producción</h1>
 
 <div class="card">
+
 <div class="grid">
 
 <div>
-<label>Jornada (Minutos)</label>
-<input type="number" id="jornada" value="8" oninput="calcular()">
+<label>Jornada Disponible (Minutos)</label>
+<input
+type="number"
+id="jornada"
+value="540"
+oninput="calcular()">
+<div class="nota">
+Ejemplo: 9 horas = 540 minutos
+</div>
 </div>
 
 <div>
 <label>Personas Disponibles</label>
-<input type="number" id="personas" value="20" oninput="calcular()">
+<input
+type="number"
+id="personas"
+value="10"
+oninput="calcular()">
 </div>
 
 <div>
 <label>Eficiencia Objetivo (%)</label>
-<input type="number" id="metaEficiencia" value="85" oninput="calcular()">
+<input
+type="number"
+id="metaEficiencia"
+value="100"
+oninput="calcular()">
 </div>
 
 </div>
+
 </div>
 
 <div class="card">
@@ -111,44 +144,50 @@ grid-template-columns:1fr;
 <thead>
 <tr>
 <th>Estilo</th>
-<th>SMVD</th>
+<th>SMV</th>
 <th>Unidades</th>
 <th>Eficiencia (%)</th>
 <th>Unidades Necesarias</th>
 </tr>
 </thead>
 
-<tbody id="tabla">
-</tbody>
+<tbody id="tabla"></tbody>
 
 </table>
 
 </div>
 
 <div class="card">
-<h2>Total Eficiencia: <span id="total">0.00%</span></h2>
+<div class="resumen">
+Total Eficiencia:
+<span id="total">0.00%</span>
+</div>
 </div>
 
 </div>
 
 <script>
 
-const tabla=document.getElementById('tabla');
+const tabla = document.getElementById("tabla");
 
 for(let i=1;i<=5;i++){
 
-tabla.innerHTML+=`
+tabla.innerHTML += `
 <tr>
+
 <td>Estilo ${i}</td>
 
 <td>
-<input type="number"
+<input
+type="number"
+step="0.01"
 id="smvd${i}"
 oninput="calcular()">
 </td>
 
 <td>
-<input type="number"
+<input
+type="number"
 id="uni${i}"
 oninput="calcular()">
 </td>
@@ -163,58 +202,62 @@ oninput="calcular()">
 
 </tr>
 `;
+
 }
 
 function calcular(){
 
-let jornada=
-Number(document.getElementById('jornada').value)||0;
+let jornada =
+Number(document.getElementById("jornada").value) || 0;
 
-let personas=
-Number(document.getElementById('personas').value)||0;
+let personas =
+Number(document.getElementById("personas").value) || 0;
 
-let meta=
-Number(document.getElementById('metaEficiencia').value)||0;
+let meta =
+Number(document.getElementById("metaEficiencia").value) || 0;
 
-let total=0;
+let total = 0;
 
 for(let i=1;i<=5;i++){
 
-let smvd=
-Number(document.getElementById(`smvd${i}`).value)||0;
+let smvd =
+Number(document.getElementById(`smvd${i}`).value) || 0;
 
-let unidades=
-Number(document.getElementById(`uni${i}`).value)||0;
+let unidades =
+Number(document.getElementById(`uni${i}`).value) || 0;
 
-let eficiencia=0;
+let eficiencia = 0;
 
-if(jornada>0 && personas>0){
+if(jornada > 0 && personas > 0){
 
-eficiencia=
-((smvd*unidades)/(jornada*personas))*100;
-
-}
-
-document.getElementById(`efi${i}`).innerText=
-eficiencia.toFixed(2)+"%";
-
-total+=eficiencia;
-
-let unidadesMeta=0;
-
-if(smvd>0){
-
-unidadesMeta=
-((jornada*personas)/smvd)*(meta/100);
+eficiencia =
+((smvd * unidades) / (jornada * personas)) * 100;
 
 }
 
-document.getElementById(`meta${i}`).innerText=
+document.getElementById(`efi${i}`).innerText =
+eficiencia.toFixed(2) + "%";
+
+total += eficiencia;
+
+let unidadesMeta = 0;
+
+if(smvd > 0){
+
+unidadesMeta =
+((jornada * personas) / smvd) *
+(meta / 100);
+
+}
+
+document.getElementById(`meta${i}`).innerText =
 Math.ceil(unidadesMeta);
+
 }
 
-document.getElementById('total').innerText=
-total.toFixed(2)+"%";
+document.getElementById("total").innerText =
+total.toFixed(2) + "%";
+
 }
 
 calcular();
