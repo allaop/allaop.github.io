@@ -1,15 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
-
-    
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Calculadora de Eficiencia de Producción</title>
 
 <style>
-
 body{
     font-family:Arial,sans-serif;
     background:#f4f6f9;
@@ -22,7 +18,7 @@ body{
 }
 
 .card{
-    background:white;
+    background:#fff;
     padding:20px;
     border-radius:10px;
     box-shadow:0 2px 8px rgba(0,0,0,.1);
@@ -31,7 +27,6 @@ body{
 
 h1{
     text-align:center;
-    color:#333;
 }
 
 .grid{
@@ -43,9 +38,9 @@ h1{
 input{
     width:100%;
     padding:8px;
+    box-sizing:border-box;
     border:1px solid #ccc;
     border-radius:5px;
-    box-sizing:border-box;
 }
 
 button{
@@ -88,29 +83,19 @@ th{
     font-weight:bold;
 }
 
-.resumen{
-    font-size:20px;
+tfoot{
     font-weight:bold;
-}
-
-.nota{
-    font-size:13px;
-    color:#666;
-    margin-top:5px;
+    background:#f0f0f0;
 }
 
 @media(max-width:768px){
-
-.grid{
-    grid-template-columns:1fr;
+    .grid{
+        grid-template-columns:1fr;
+    }
 }
-
-}
-
 </style>
 
 </head>
-
 <body>
 
 <div class="container">
@@ -123,37 +108,17 @@ th{
 
 <div>
 <label>Jornada Disponible (Minutos)</label>
-
-<input
-type="number"
-id="jornada"
-value="540"
-oninput="calcular()">
-
-<div class="nota">
-Ejemplo: Jornada de 9 horas = 540 minutos
-</div>
-
+<input type="number" id="jornada" value="540" oninput="calcular()">
 </div>
 
 <div>
 <label>Personas Disponibles</label>
-
-<input
-type="number"
-id="personas"
-value="10"
-oninput="calcular()">
+<input type="number" id="personas" value="10" oninput="calcular()">
 </div>
 
 <div>
 <label>Eficiencia Objetivo (%)</label>
-
-<input
-type="number"
-id="metaEficiencia"
-value="100"
-oninput="calcular()">
+<input type="number" id="metaEficiencia" value="100" oninput="calcular()">
 </div>
 
 </div>
@@ -166,12 +131,177 @@ oninput="calcular()">
 
 <div>
 <label>Cantidad de Estilos</label>
-
-<input
-type="number"
-id="cantidadEstilos"
-value="5"
-min="1">
+<input type="number" id="cantidadEstilos" value="5" min="1">
 </div>
 
-<div 
+<div style="display:flex;align-items:flex-end;">
+<button onclick="crearTabla()">
+Generar Estilos
+</button>
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<table>
+
+<thead>
+<tr>
+<th>Estilo</th>
+<th>SMV</th>
+<th>Unidades</th>
+<th>Eficiencia (%)</th>
+<th>Unidades Necesarias</th>
+</tr>
+</thead>
+
+<tbody id="tabla">
+</tbody>
+
+<tfoot>
+<tr>
+<td colspan="2">TOTAL UNIDADES</td>
+<td id="totalUnidades">0</td>
+<td colspan="2"></td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+
+<div class="card">
+
+<h2>
+Total Eficiencia:
+<span id="total">0.00%</span>
+</h2>
+
+</div>
+
+</div>
+
+<script>
+
+let cantidadEstilos = 5;
+
+function crearTabla(){
+
+    cantidadEstilos =
+    Number(document.getElementById("cantidadEstilos").value) || 1;
+
+    const tabla =
+    document.getElementById("tabla");
+
+    tabla.innerHTML = "";
+
+    for(let i = 1; i <= cantidadEstilos; i++){
+
+        tabla.innerHTML += `
+        <tr>
+
+            <td>Estilo ${i}</td>
+
+            <td>
+                <input
+                type="number"
+                step="0.01"
+                id="smvd${i}"
+                oninput="calcular()">
+            </td>
+
+            <td>
+                <input
+                type="number"
+                id="uni${i}"
+                oninput="calcular()">
+            </td>
+
+            <td
+                class="result"
+                id="efi${i}">
+                0.00%
+            </td>
+
+            <td
+                class="meta"
+                id="meta${i}">
+                0
+            </td>
+
+        </tr>
+        `;
+    }
+
+    calcular();
+}
+
+function calcular(){
+
+    const jornada =
+    Number(document.getElementById("jornada").value) || 0;
+
+    const personas =
+    Number(document.getElementById("personas").value) || 0;
+
+    const meta =
+    Number(document.getElementById("metaEficiencia").value) || 0;
+
+    let totalEficiencia = 0;
+    let totalUnidades = 0;
+
+    for(let i = 1; i <= cantidadEstilos; i++){
+
+        const smv =
+        Number(document.getElementById(`smvd${i}`)?.value) || 0;
+
+        const unidades =
+        Number(document.getElementById(`uni${i}`)?.value) || 0;
+
+        totalUnidades += unidades;
+
+        let eficiencia = 0;
+
+        if(jornada > 0 && personas > 0){
+
+            eficiencia =
+            ((smv * unidades) /
+            (jornada * personas)) * 100;
+        }
+
+        document.getElementById(`efi${i}`).innerText =
+        eficiencia.toFixed(2) + "%";
+
+        totalEficiencia += eficiencia;
+
+        let unidadesMeta = 0;
+
+        if(smv > 0){
+
+            unidadesMeta =
+            ((jornada * personas) / smv) *
+            (meta / 100);
+        }
+
+        document.getElementById(`meta${i}`).innerText =
+        Math.ceil(unidadesMeta);
+
+    }
+
+    document.getElementById("total").innerText =
+    totalEficiencia.toFixed(2) + "%";
+
+    document.getElementById("totalUnidades").innerText =
+    totalUnidades.toLocaleString();
+
+}
+
+crearTabla();
+
+</script>
+
+</body>
+</html>
