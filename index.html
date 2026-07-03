@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -98,9 +99,11 @@ th{
 }
 
 @media(max-width:768px){
-    .grid{
-        grid-template-columns:1fr;
-    }
+
+.grid{
+    grid-template-columns:1fr;
+}
+
 }
 
 </style>
@@ -119,6 +122,7 @@ th{
 
 <div>
 <label>Jornada Disponible (Minutos)</label>
+
 <input
 type="number"
 id="jornada"
@@ -128,10 +132,12 @@ oninput="calcular()">
 <div class="nota">
 Ejemplo: Jornada de 9 horas = 540 minutos
 </div>
+
 </div>
 
 <div>
 <label>Personas Disponibles</label>
+
 <input
 type="number"
 id="personas"
@@ -141,6 +147,7 @@ oninput="calcular()">
 
 <div>
 <label>Eficiencia Objetivo (%)</label>
+
 <input
 type="number"
 id="metaEficiencia"
@@ -158,6 +165,7 @@ oninput="calcular()">
 
 <div>
 <label>Cantidad de Estilos</label>
+
 <input
 type="number"
 id="cantidadEstilos"
@@ -165,166 +173,4 @@ value="5"
 min="1">
 </div>
 
-<div style="display:flex;align-items:flex-end;">
-<button onclick="crearTabla()">
-Generar Estilos
-</button>
-</div>
-
-</div>
-
-</div>
-
-<div class="card">
-
-<table>
-
-<thead>
-<tr>
-<th>Estilo</th>
-<th>SMV</th>
-<th>Unidades</th>
-<th>Eficiencia (%)</th>
-<th>Unidades Necesarias</th>
-</tr>
-</thead>
-
-<tbody id="tabla">
-</tbody>
-
-<tfoot>
-<tr style="font-weight:bold;background:#f0f0f0;">
-<td colspan="2">TOTAL UNIDADES</td>
-<td id="totalUnidades">0</td>
-<td colspan="2"></td>
-</tr>
-</tfoot>
-
-</table>
-
-</div>
-
-<div class="card">
-
-<div class="resumen">
-Total Eficiencia:
-<span id="total">0.00%</span>
-</div>
-
-</div>
-
-</div>
-
-<script>
-
-let cantidadEstilos = 5;
-
-function crearTabla(){
-
-    cantidadEstilos =
-    Number(document.getElementById("cantidadEstilos").value) || 1;
-
-    const tabla =
-    document.getElementById("tabla");
-
-    tabla.innerHTML = "";
-
-    for(let i=1;i<=cantidadEstilos;i++){
-
-        tabla.innerHTML += `
-        <tr>
-
-            <td>Estilo ${i}</td>
-
-            <td>
-                <input
-                type="number"
-                step="0.01"
-                id="smvd${i}"
-                oninput="calcular()">
-            </td>
-
-            <td>
-                <input
-                type="number"
-                id="uni${i}"
-                oninput="calcular()">
-            </td>
-
-            <td class="result" id="efi${i}">
-                0.00%
-            </td>
-
-            <td class="meta" id="meta${i}">
-                0
-            </td>
-
-        </tr>
-        `;
-    }
-
-    calcular();
-}
-
-function calcular(){
-
-    let jornada =
-    Number(document.getElementById("jornada").value) || 0;
-
-    let personas =
-    Number(document.getElementById("personas").value) || 0;
-
-    let meta =
-    Number(document.getElementById("metaEficiencia").value) || 0;
-
-    let total = 0;
-    let totalUnidades = 0;
-
-    for(let i=1;i<=cantidadEstilos;i++){
-
-        let smvd =
-        Number(document.getElementById(`smvd${i}`)?.value) || 0;
-
-        let unidades =
-        Number(document.getElementById(`uni${i}`)?.value) || 0;
-        totalUnidades += unidades;
-
-        let eficiencia = 0;
-
-        if(jornada > 0 && personas > 0){
-
-            eficiencia =
-            ((smvd * unidades) / (jornada * personas)) * 100;
-        }
-
-        document.getElementById(`efi${i}`).innerText =
-        eficiencia.toFixed(2) + "%";
-
-        total += eficiencia;
-
-        let unidadesMeta = 0;
-
-        if(smvd > 0){
-
-            unidadesMeta =
-            ((jornada * personas) / smvd) *
-            (meta / 100);
-        }
-
-        document.getElementById(`meta${i}`).innerText =
-        Math.ceil(unidadesMeta);
-    }
-
-    document.getElementById("total").innerText =2total.toFixed(2) + "%";3 4document.getElementById("totalUnidades").innerText =5totalUnidades.toLocaleString();
-
-    document.getElementById("totalUnidades").innerText =2totalUnidades.toLocaleString();
-}
-
-
-    
-crearTabla();
-
-</script>
-
-</body>
-</html>
+<div 
